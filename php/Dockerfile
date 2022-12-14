@@ -1,4 +1,5 @@
-FROM php:8.2-fpm-alpine3.16
+FROM php:8.2-apache
+#FROM php:8.2-fpm-alpine3.16
 
 # Install tools required for build stage
 RUN apk add --update --no-cache \
