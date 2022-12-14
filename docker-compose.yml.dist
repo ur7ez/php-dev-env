@@ -16,6 +16,7 @@ services:
     - 127.0.0.1:9001:9000
     volumes:
     - ./app:/var/www/html
+    - ./php-fpm/php.ini:/usr/local/etc/php/php.ini
 
   php:
     build:
