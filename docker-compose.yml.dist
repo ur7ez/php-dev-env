@@ -1,7 +1,47 @@
 services:
 
+  nginx:
+    image: nginx:latest
+    ports:
+    - 127.0.0.1:80:80
+    volumes:
+    - ./app:/var/www/html
+    - ./configs/nginx:/etc/nginx/conf.d
+    - ./logs/nginx:/var/log/nginx
+
+  php-fpm:
+    build:
+      context: php-fpm
+    ports:
+    - 127.0.0.1:9001:9000
+    volumes:
+    - ./app:/var/www/html
+
   php:
     build:
-      context: .
+      context: php
     ports:
-      - 127.0.0.1:9001:9000
+    - 127.0.0.1:81:80
+    volumes:
+    - ./app:/var/www/html
+
+  mariadb:
+    image: mariadb:10.10
+    ports:
+    - 127.0.0.1:3306:3306
+    environment:
+      MARIADB_ROOT_PASSWORD: root
+      MARIADB_DATABASE: testdb
+      MARIADB_USER: test_user
+      MARIADB_PASSWORD: test_pwd
+    volumes:
+    - ./databases/mariadb:/var/lib/mysql
+
+  phpmyadmin:
+    image: phpmyadmin:latest
+    ports:
+    - 127.0.0.1:8080:80
+    environment:
+      PMA_HOST: mariadb
+      PMA_USER: test_user
+      PMA_PASSWORD: test_pwd

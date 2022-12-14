@@ -1,13 +1,11 @@
-FROM php:8.2-apache
-
-RUN apt-get update
+FROM php:8.2-fpm-alpine3.16
 
 # Install tools required for build stage
-RUN apt-get install -fyqq \
-    bash curl wget rsync ca-certificates openssl ssh git tzdata openntpd \
-    libxrender1 fontconfig libc6 \
-    mariadb-client gnupg binutils-gold autoconf \
-    g++ gcc gnupg libgcc1 linux-headers-amd64 make python3
+RUN apk add --update --no-cache \
+    bash curl wget rsync ca-certificates openssl openssh git tzdata openntpd \
+    libxrender fontconfig libc6-compat \
+    mysql-client gnupg binutils-gold autoconf \
+    g++ gcc libgcc linux-headers make py-pip
 
 # Install composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin --filename=composer \
@@ -22,8 +20,7 @@ RUN docker-php-ext-install bcmath pdo pdo_mysql \
     && docker-php-ext-enable pdo_mysql
 
 # Install libraries for compiling GD, then build it
-RUN apt-get install -fyqq \
-    libfreetype6 libfreetype6-dev libpng16-16 libpng-dev libjpeg62-turbo libjpeg62-turbo-dev libwebp libwebp-dev \
+RUN apk add --no-cache freetype libpng libjpeg-turbo libwebp freetype-dev libpng-dev libjpeg-turbo-dev libwebp-dev \
     && docker-php-ext-configure gd \
             --enable-gd \
             --with-freetype=/usr/include/ \
@@ -31,12 +28,11 @@ RUN apt-get install -fyqq \
             --with-webp=/usr/include/ \
     && nproc=$(grep -c ^processor /proc/cpuinfo 2>/dev/null || 1) \
     && docker-php-ext-install -j${nproc} gd \
-    && apt-get remove -fyqq libfreetype6-dev libpng-dev libjpeg62-turbo-dev libwebp-dev
+    && apk del --no-cache freetype-dev libpng-dev libjpeg-turbo-dev libwebp-dev
 
 # Add ZIP archives support
-RUN apt-get install -fyqq zip libzip-dev \
-    && docker-php-ext-install zip \
-    && apt-get remove -fyqq libzip-dev
+RUN apk add --update --no-cache zlib-dev libzip-dev \
+    && docker-php-ext-install zip
 
 # Install xDebug
 RUN pecl install xdebug-3.2.0 \
