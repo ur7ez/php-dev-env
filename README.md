@@ -2,27 +2,34 @@
 
 LAMP is abbreviate of Linux Apache MySQL/MariaDB PHP.
 
-That mean complete environment for development on PHP language.
+That means complete environment for development on PHP language.
 
 ## How to use
 
-Just copy docker-compose.yml from dist example
+Copy docker-compose.yml from dist example
 
     cp docker-compose.dist.yml docker-compose.yml
 
-Then build
+If you plan to use this image in production - do not forget to modify php.ini accordingly in dockerfile step #3, e.g.:
+
+    RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
+
+Then build docker image
 
     docker-compose build
 
-And run composition
+after that we need to load images containers we created in our docker-compose.yml into our docker image:
+
+    docker-compose pull
+
+and run composition
 
     docker-compose up -d
 
-After this you may go to http://localhost or 127.0.0.1 and will see the NGINX default
-index page.
+After this you may go to http://localhost or 127.0.0.1 and will see the Apache (NGINX) default index page.
 
 Of course, you want to pass your PHP files to this composition, for this you
-need to overwrite strings like:
+need to overwrite (or add) strings like:
 
     - ./app:/var/www/html
 

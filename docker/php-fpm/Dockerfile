@@ -7,6 +7,9 @@ RUN apk add --update --no-cache \
     mysql-client gnupg binutils-gold autoconf \
     g++ gcc libgcc linux-headers make py-pip
 
+# Use the default (production / development) configuration
+RUN mv "$PHP_INI_DIR/php.ini-development" "$PHP_INI_DIR/php.ini"
+
 # Install composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin --filename=composer \
     && chmod 755 /usr/bin/composer
@@ -16,7 +19,7 @@ RUN curl -O https://phar.phpunit.de/phpunit-9.5.27.phar \
     && chmod +x phpunit-9.5.27.phar && mv phpunit-9.5.27.phar /usr/bin/phpunit
 
 # Install additional PHP libraries
-RUN docker-php-ext-install bcmath pdo pdo_mysql \
+RUN docker-php-ext-install bcmath pdo_mysql \
     && docker-php-ext-enable pdo_mysql
 
 # Install libraries for compiling GD, then build it
@@ -26,8 +29,7 @@ RUN apk add --no-cache freetype libpng libjpeg-turbo libwebp freetype-dev libpng
             --with-freetype=/usr/include/ \
             --with-jpeg=/usr/include/ \
             --with-webp=/usr/include/ \
-    && nproc=$(grep -c ^processor /proc/cpuinfo 2>/dev/null || 1) \
-    && docker-php-ext-install -j${nproc} gd \
+    && docker-php-ext-install gd \
     && apk del --no-cache freetype-dev libpng-dev libjpeg-turbo-dev libwebp-dev
 
 # Add ZIP archives support
@@ -38,7 +40,7 @@ RUN apk add --update --no-cache zlib-dev libzip-dev \
 RUN pecl install xdebug-3.2.0 \
     && docker-php-ext-enable xdebug
 
-# Enable xDebug
-ADD xdebug.ini /usr/local/etc/php/conf.d/xdebug.ini
+# to be able to use "nano" with shell on "docker exec -it [CONTAINER ID] bash"
+ENV TERM xterm
 
 WORKDIR /app
