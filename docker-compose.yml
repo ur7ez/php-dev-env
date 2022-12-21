@@ -1,0 +1,45 @@
+services:
+
+  php:
+    build:
+      context: docker/php
+    ports:
+    - 127.0.0.1:80:80
+    volumes:
+      - ./app:/var/www/php-dev.local/public
+      - ../wisk-test:/var/www/example.com
+#      - ../wisk-test:/app
+      - ./docker/php/custom.ini:/usr/local/etc/php/conf.d/custom.ini
+      - ./docker/php/xdebug.ini:/usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+      - ./docker/php/error_reporting.ini:/usr/local/etc/php/conf.d/error_reporting.ini
+      - ./docker/apache:/etc/apache2/sites-enabled
+      - ./logs/apache:/var/log/apache2
+    environment:
+      PHP_IDE_CONFIG: "serverName=PhpServerDev"
+    extra_hosts:
+      - "php-dev.local www.php-dev.local:127.0.0.1"
+    domainname: php-dev-env.local
+    hostname: php-dev-env
+    links:
+      - "mariadb:db"
+
+  mariadb:
+    image: mariadb:10.10
+    ports:
+    - 127.0.0.1:3306:3306
+    environment:
+      MARIADB_ROOT_PASSWORD: root
+      MARIADB_DATABASE: testdb
+      MARIADB_USER: test_user
+      MARIADB_PASSWORD: test_pwd
+    volumes:
+    - ./databases/mariadb:/var/lib/mysql
+
+  phpmyadmin:
+    image: phpmyadmin:latest
+    ports:
+    - 127.0.0.1:8080:80
+    environment:
+      PMA_HOST: mariadb
+      PMA_USER: test_user
+      PMA_PASSWORD: test_pwd
