@@ -50,6 +50,6 @@ ENV TERM xterm
 RUN a2enmod rewrite
 # to see live logs: docker logs -f [CONTAINER ID]
 # without the following line we get "AH00558: apache2: Could not reliably determine the server's fully qualified domain name"
-RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf
+RUN echo "ServerName php-dev.local" >> /etc/apache2/apache2.conf
 
 WORKDIR /app

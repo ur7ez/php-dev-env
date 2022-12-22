@@ -20,6 +20,8 @@ services:
       - "php-dev.local www.php-dev.local:127.0.0.1"
     domainname: php-dev-env.local
     hostname: php-dev-env
+    depends_on:
+      - mariadb
     links:
       - "mariadb:db"
 

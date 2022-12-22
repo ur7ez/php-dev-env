@@ -9,6 +9,8 @@ services:
       - ./app:/var/www/php-dev.local/public
       - ./docker/nginx/site.conf:/etc/nginx/conf.d/site.conf
       - ./logs/nginx:/var/log/nginx
+    depends_on:
+      - mariadb
     links:
       - php-fpm
 
