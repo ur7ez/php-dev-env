@@ -7,7 +7,7 @@ RUN apt-get update && apt-get install -fyqq \
     mariadb-client gnupg binutils-gold autoconf nano \
     g++ gcc gnupg libgcc1 linux-headers-amd64 make python3
 
-# Use the default (production / development) configuration
+# Add default (production / development) PHP configuration
 RUN mv "$PHP_INI_DIR/php.ini-development" "$PHP_INI_DIR/php.ini"
 
 # Install composer
@@ -38,7 +38,7 @@ RUN apt-get install -fyqq zip libzip-dev \
     && docker-php-ext-install zip \
     && apt-get remove -fyqq libzip-dev
 
-# Install xDebug
+# Install xDebug (do not use for production!)
 RUN pecl install xdebug-3.2.0 \
     && docker-php-ext-enable xdebug
 

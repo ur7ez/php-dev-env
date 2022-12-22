@@ -6,7 +6,7 @@ services:
       - 127.0.0.1:8080:80
       - 127.0.0.1:9001:9003
     volumes:
-      - ./app:/var/www/html
+      - ./app:/var/www/php-dev.local/public
       - ./docker/nginx/site.conf:/etc/nginx/conf.d/site.conf
       - ./logs/nginx:/var/log/nginx
     links:
@@ -18,8 +18,8 @@ services:
     ports:
     - 127.0.0.1:9001:9003
     volumes:
-      - ./app:/var/www/html
-      - ../wisk-test:/app
+      - ./app:/var/www/php-dev.local/public
+#      - ../[path-to-project-you-need-to-access-in-docker-container]:/app
       - ./docker/php-fpm/custom.ini:/usr/local/etc/php/conf.d/custom.ini
       - ./docker/php-fpm/xdebug.ini:/usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
       - ./docker/php-fpm/error_reporting.ini:/usr/local/etc/php/conf.d/error_reporting.ini
@@ -27,6 +27,8 @@ services:
       PHP_IDE_CONFIG: "serverName=PhpServerDev"
     extra_hosts:
       - "php-dev.local www.php-dev.local:127.0.0.1"
+    domainname: php-dev-env.local
+    hostname: php-dev-env
     links:
       - "mariadb:db"
 

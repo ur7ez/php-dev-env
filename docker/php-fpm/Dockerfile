@@ -7,7 +7,7 @@ RUN apk add --update --no-cache \
     mysql-client gnupg binutils-gold autoconf \
     g++ gcc libgcc linux-headers make py-pip
 
-# Use the default (production / development) configuration
+# Add default (production / development) PHP configuration
 RUN mv "$PHP_INI_DIR/php.ini-development" "$PHP_INI_DIR/php.ini"
 
 # Install composer
@@ -36,7 +36,7 @@ RUN apk add --no-cache freetype libpng libjpeg-turbo libwebp freetype-dev libpng
 RUN apk add --update --no-cache zlib-dev libzip-dev \
     && docker-php-ext-install zip
 
-# Install xDebug
+# Install xDebug (do not use for production!)
 RUN pecl install xdebug-3.2.0 \
     && docker-php-ext-enable xdebug
 
